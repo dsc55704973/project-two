@@ -71,18 +71,19 @@ var icons = {
 
 // API call here (need help connecting to flask app and connecting flask app to SQL)
 // grab names
-d3.json("{[CONNECT TO FLASK API]}", function(barName) {
+d3.json("http://localhost:5000/api/v1.0/bar_names", function(barName) {
 
   // second call to grab bar data
-  d3.json("{[CONNECT TO FLASK API]}", function(barData) {
+  d3.json("http://localhost:5000/api/v1.0/bar_data", function(barData) {
     var bar_name = barName.bar_names;
-    var latitude = barData.bar_data.latitude;
-    var longitude = barData.bar_data.longitude;
-    var rating = barData.bar_data.rating;
-    var category = barData.bar_data.category;
-    var address = barData.bar_data.address;
-    var zip_code = barData.bar_data.zip_code;
+    var latitude = barData.latitude;
+    var longitude = barData.longitude;
+    var rating = barData.rating;
+    var category = barData.category;
+    var address = barData.address;
+    var zip_code = barData.zip_code;
 
+    console.log(barName)
     // bar count
     var barCount = {
       Brewery: 0,
