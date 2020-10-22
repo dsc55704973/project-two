@@ -1,11 +1,8 @@
 import numpy as np
-
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
-
-
 from flask import Flask, jsonify
 from flask_cors import CORS, cross_origin
 
@@ -27,7 +24,8 @@ breweryDB = Base.classes.denverBeer
 # Flask Setup
 #################################################
 app = Flask(__name__)
-
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 #################################################
 # Flask Routes
@@ -52,24 +50,28 @@ def barNames():
 
 @app.route("/api/v1.0/bar_data")
 def barData():
-    # Create our session (link) from Python to the DB
+    # session
     session = Session(engine)
 
     # Query bar latitude, longitude, and rating
-    results = session.query(breweryDB.latitude, breweryDB.longitude, breweryDB.rating, breweryDB.category, breweryDB.address1, breweryDB.zip_code).all()
+    results = session.query(breweryDB.name_, breweryDB.latitude, breweryDB.longitude, breweryDB.rating, breweryDB.category, breweryDB.address1, breweryDB.zip_code, breweryDB.price, breweryDB.display_phone).all()
 
     session.close()
 
-    # Create a dictionary from the row data and append to a list of all_passengers
+    # bar data dictionary
     bar_data = []
-    for latitude, longitude, rating, category, address1, zip_code in results:
+    for name_, latitude, longitude, rating, category, address1, zip_code, price, display_phone in results:
         brewery_dict = {}
+        brewery_dict["name"] = name_
         brewery_dict["latitude"] = latitude
         brewery_dict["longitude"] = longitude
         brewery_dict["rating"] = rating
         brewery_dict["category"] = category
         brewery_dict["address"] = address1
         brewery_dict["zip_code"] = zip_code
+        brewery_dict["price"] = price
+        brewery_dict["phone"] = display_phone
+
         bar_data.append(brewery_dict)
 
     return jsonify(bar_data)
